@@ -1,0 +1,131 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model MatriculaSich {
+  id            Int     @id @default(autoincrement())
+  gestion       Int?
+  mes           String?
+  departamento String?
+  codDistrito   Int?
+  distrito      String?
+  codUe         Int     @map("cod_ue")
+  ue            String?
+  inicial       Int?
+  primaria      Int?
+  secundaria    Int?
+  total         Int?
+
+  @@map("matricula_sich")
+}
+
+model DeficitSuperavitSich {
+  id            Int     @id @default(autoincrement())
+  deptoId       String  @map("depto_id")
+  departamento String?
+  distritoId    String  @map("distrito_id")
+  distrito      String?
+  codUe         String  @map("cod_ue")
+  ue            String?
+  area          String?
+  i1            Int?    @map("i_1")
+  i2            Int?    @map("i_2")
+  p1            Int?    @map("p_1")
+  p2            Int?    @map("p_2")
+  p3            Int?    @map("p_3")
+  p4            Int?    @map("p_4")
+  p5            Int?    @map("p_5")
+  p6            Int?    @map("p_6")
+  s1            Int?    @map("s_1")
+  s2            Int?    @map("s_2")
+  s3            Int?    @map("s_3")
+  s4            Int?    @map("s_4")
+  s5            Int?    @map("s_5")
+  s6            Int?    @map("s_6")
+  totalDeficit  Int?    @map("total_deficit")
+  item96Horas   Decimal? @map("item_96_horas")
+
+  @@map("deficit_superavit_sich")
+}
+
+model DeficitSuperavitSie {
+  id                    Int     @id @default(autoincrement())
+  idDepartamento        Int     @map("id_departamento")
+  descDepartamento      String? @map("desc_departamento")
+  codDistrito           Int     @map("cod_distrito")
+  distrito              String?
+  codUeId               Int     @map("cod_ue_id")
+  descUe                String? @map("desc_ue")
+  area                  String?
+  codDependenciaId      Int     @map("cod_dependencia_id")
+  dependencia           String?
+  institucioneducativaId Int?   @map("institucioneducativa_id")
+  horasPlanUe           Int?    @map("horas_plan_ue")
+  horasPagadasUe        Int?    @map("horas_pagadas_ue")
+  deficitHistorico      Int?    @map("deficit_historico")
+  superhavitHistorico    Int?    @map("superhavit_historico")
+
+  @@map("deficit_superavit_sie")
+}
+
+model DatosBaseUesMatricula {
+  id                    Int     @id @default(autoincrement())
+  gestionTipoId         Int?    @map("gestion_tipo_id")
+  idDepartamento        Int?    @map("id_departamento")
+  descDepartamento      String? @map("desc_departamento")
+  codDistrito           Int?    @map("cod_distrito")
+  distrito              String?
+  codUeId               Int     @map("cod_ue_id")
+  descUe                String? @map("desc_ue")
+  nivelTipoId           Int?    @map("nivel_tipo_id")
+  estadomatricula       String?
+  als                   Int?
+  codLeId               Int?    @map("cod_le_id")
+  direccion             String?
+  zona                  String?
+  area                  String?
+  idProvincia            Int?    @map("id_provincia")
+  descProvincia          String? @map("desc_provincia")
+  idSeccion             Int?    @map("id_seccion")
+  descSeccion           String? @map("desc_seccion")
+  idCanton              Int?    @map("id_canton")
+  descCanton            String? @map("desc_canton")
+  idLocalidad           Int?    @map("id_localidad")
+  descLocalidad         String? @map("desc_localidad")
+  codConvenioId         Int?    @map("cod_convenio_id")
+  convenio              String?
+  dependenciaGen        String? @map("dependencia_gen")
+  codDependenciaId      Int?    @map("cod_dependencia_id")
+  dependencia           String?
+  ini                   Int?
+  pri                   Int?
+  sec                   Int?
+  epa                   Int?
+  esa                   Int?
+  eta                   Int?
+  esp                   Int?
+  perm                  Int?
+  permTec               Int?    @map("perm_tec")
+  permOtros             Int?    @map("perm_otros")
+  eja                   Int?
+  fechaLastUpdate       DateTime? @map("fecha_last_update")
+  estadoinstitucion     String?
+  cordx                 Float?
+  cordy                 Float?
+  nroResolucion         String? @map("nro_resolucion")
+  fechaResolucion       DateTime? @map("fecha_resolucion")
+  fechaCreacion         String? @map("fecha_creacion")
+  fechaCierre           String? @map("fecha_cierre")
+  fechaFundacion        String? @map("fecha_fundacion")
+  obsRue                String? @map("obs_rue")
+  nroAniosCerrados      Int?    @map("nro_anios_cerrados")
+  codOrgCurrId          Int?    @map("cod_org_curr_id")
+  orgcurricula          String?
+
+  @@map("datos_base_ues_matricula")
+}
