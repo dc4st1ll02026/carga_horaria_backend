@@ -13,10 +13,11 @@ const pool = new Pool({
 });
 
 const app = express();
-const PORT = process.env.PORT || 3500;
+const PORT = Number(process.env.PORT) || 3500;
 
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:5174'],
+  origin: true,
+  credentials: false,
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type']
 }));
@@ -30,8 +31,8 @@ app.get('/health', (req, res) => {
 
 app.use('/consulta', consultaRoutes);
 
-app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Servidor corriendo en http://0.0.0.0:${PORT}`);
 });
 
 process.on('SIGINT', async () => {

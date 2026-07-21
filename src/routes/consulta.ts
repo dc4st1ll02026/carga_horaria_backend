@@ -63,19 +63,32 @@ router.post('/docente', async (req: Request, res: Response) => {
   const pool: Pool = req.app.locals.pool;
 
   try {
-    const { docente_id } = req.body;
+    const { docente_id, institucioneducativa_id } = req.body;
 
     if (docente_id === undefined || docente_id === null) {
       return res.status(400).json({
         error: 'El parámetro docente_id es requerido'
       });
     }
+    if (institucioneducativa_id === undefined || institucioneducativa_id === null) {
+      return res.status(400).json({
+        error: 'El parámetro institucioneducativa_id es requerido'
+      });
+    }
 
     const docenteId = String(docente_id);
+    const institucionId = Number(institucioneducativa_id);
+
+    if (isNaN(institucionId)) {
+      return res.status(400).json({
+        error: 'El parámetro institucioneducativa_id debe ser un número'
+      });
+    }
 
     const result = await pool.query(
-      'SELECT * FROM asignacion_docente_2026 WHERE carnet = $1 limit 6',
-      [docenteId]
+      `SELECT * FROM asignacion_docente_2026
+       WHERE carnet = $1 AND institucioneducativa_id = $2`,
+      [docenteId, institucionId]
     );
 
     return res.json({
