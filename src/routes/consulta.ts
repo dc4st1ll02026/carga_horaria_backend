@@ -40,7 +40,7 @@ router.post('/', async (req: Request, res: Response) => {
           planilla.horas
         FROM planilla_2026 as planilla
         LEFT JOIN cargos ON planilla.cargo = cargos.cargo
-        WHERE programa = $1 and mes = 2
+        WHERE programa = $1 and mes = 4
       `, [codUeId])
     ]);
 
@@ -102,4 +102,73 @@ router.post('/docente', async (req: Request, res: Response) => {
   }
 });
 
+router.post('/administrativo', async (req: Request, res: Response) => {
+  const pool: Pool = req.app.locals.pool;
+
+  try {
+    const { cod_ue_id } = req.body;
+
+    if (cod_ue_id === undefined || cod_ue_id === null) {
+      return res.status(400).json({
+        error: 'El parámetro cod_ue_id es requerido'
+      });
+    }
+
+    const codUeId = Number(cod_ue_id);
+
+    if (isNaN(codUeId)) {
+      return res.status(400).json({
+        error: 'El parámetro cod_ue_id debe ser un número'
+      });
+    }
+
+    const [datosUe, totalesAdministrativos, datosMatricula, planillaAbril, paralelosSie] = await Promise.all([
+      pool.query(
+        'SELECT * FROM datos_base_ues_matricula WHERE cod_ue_id = $1 LIMIT 1',
+        [codUeId]
+      ),
+      pool.query(
+        'SELECT total, cargo FROM totales_administrativos WHERE institucioneducativa_id = $1 ORDER BY cargo',
+        [codUeId]
+      ),
+      pool.query(
+        'SELECT * FROM datos_base_ues_matricula WHERE cod_ue_id = $1 ORDER BY gestion_tipo_id, nivel_tipo_id',
+        [codUeId]
+      ),
+      pool.query(`
+        SELECT
+          planilla.servicio,
+          planilla.programa,
+          planilla.item,
+          planilla.carnetcomp as carnet_identidad,
+          cargos.descripcion as denominacion_cargo,
+          planilla.porcate,
+          planilla.cod_rda,
+          planilla.horas
+        FROM planilla_2026 as planilla
+        LEFT JOIN cargos ON planilla.cargo = cargos.cargo
+        WHERE programa = $1 and mes = 4 and cargos.tipo = 'A'
+      `, [codUeId]),
+      pool.query(
+        'SELECT total, nivel, grado FROM paralelos_sie_agrupados where institucioneducativa_id = $1  ORDER BY nivel, grado',
+         [codUeId]
+      )
+    ]);
+
+    return res.json({
+      datos_ue: datosUe.rows,
+      totales_administrativos: totalesAdministrativos.rows,
+      datos_matricula: datosMatricula.rows,
+      planilla_abril: planillaAbril.rows,
+      paralelos_sie: paralelosSie.rows
+    });
+  } catch (error) {
+    console.error('Error en consulta administrativa:', error);
+    return res.status(500).json({
+      error: 'Error interno del servidor'
+    });
+  }
+});
+
 export { router as consultaRoutes };
+
