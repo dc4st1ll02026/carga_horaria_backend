@@ -170,5 +170,24 @@ router.post('/administrativo', async (req: Request, res: Response) => {
   }
 });
 
+router.get('/evaluacion-ues', async (req: Request, res: Response) => {
+  const pool: Pool = req.app.locals.pool;
+
+  try {
+    const result = await pool.query(
+      'SELECT * FROM resultado_evaluacion_ues ORDER BY cod_ue_id'
+    );
+
+    return res.json({
+      resultados: result.rows
+    });
+  } catch (error) {
+    console.error('Error al obtener evaluación de UEs:', error);
+    return res.status(500).json({
+      error: 'Error interno del servidor'
+    });
+  }
+});
+
 export { router as consultaRoutes };
 
